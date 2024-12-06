@@ -1,4 +1,4 @@
-package parser
+package parsing
 
 import (
 	"strconv"
@@ -25,19 +25,21 @@ type Token struct {
 	Literal int
 }
 
-type Scanner struct {
-	source  string
-	start   int
-	current int
-	line    int
-	tokens  []Token
+type Scanner interface {
+	ScanTokens() []Token
 }
 
-func NewScanner(source string) *Scanner {
-	return &Scanner{source: source, line: 1}
+type scanner struct {
+	source         string
+	start, current int
+	tokens         []Token
 }
 
-func (s *Scanner) ScanTokens() []Token {
+func NewScanner(source string) Scanner {
+	return &scanner{source: source}
+}
+
+func (s *scanner) ScanTokens() []Token {
 	for !s.isAtEnd() {
 		s.start = s.current
 		s.scanToken()
@@ -46,7 +48,7 @@ func (s *Scanner) ScanTokens() []Token {
 	return s.tokens
 }
 
-func (s *Scanner) scanToken() {
+func (s *scanner) scanToken() {
 	c := s.advance()
 	switch c {
 	case '(':
@@ -66,7 +68,7 @@ func (s *Scanner) scanToken() {
 	}
 }
 
-func (s *Scanner) number() {
+func (s *scanner) number() {
 	for unicode.IsDigit(s.peek()) {
 		s.advance()
 	}
@@ -76,8 +78,8 @@ func (s *Scanner) number() {
 	s.addNumberToken(literal)
 }
 
-func (s *Scanner) keyword() {
-	for unicode.IsLetter(s.peek()) {
+func (s *scanner) keyword() {
+	for unicode.IsLetter(s.peek()) && s.peek() != 'm' {
 		s.advance()
 	}
 
@@ -89,19 +91,19 @@ func (s *Scanner) keyword() {
 	}
 }
 
-func (s *Scanner) peek() rune {
+func (s *scanner) peek() rune {
 	if s.isAtEnd() {
 		return '\n'
 	}
 	return rune(s.source[s.current])
 }
 
-func (s *Scanner) addToken(tokenType TokenType) {
+func (s *scanner) addToken(tokenType TokenType) {
 	token := Token{Type: tokenType, Lexeme: s.source[s.start:s.current]}
 	s.tokens = append(s.tokens, token)
 }
 
-func (s *Scanner) addNumberToken(literal int) {
+func (s *scanner) addNumberToken(literal int) {
 	token := Token{
 		Type:    TokenNumber,
 		Lexeme:  s.source[s.start:s.current],
@@ -110,12 +112,12 @@ func (s *Scanner) addNumberToken(literal int) {
 	s.tokens = append(s.tokens, token)
 }
 
-func (s *Scanner) advance() rune {
+func (s *scanner) advance() rune {
 	char := rune(s.source[s.current])
 	s.current++
 	return char
 }
 
-func (s *Scanner) isAtEnd() bool {
+func (s *scanner) isAtEnd() bool {
 	return s.current >= len(s.source)
 }

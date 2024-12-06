@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/lewis-od/aoc24/internal/day03"
+	"github.com/lewis-od/aoc24/internal/day03/parsing"
 	"github.com/stretchr/testify/require"
 )
 
@@ -15,14 +16,17 @@ func TestPart1(t *testing.T) {
 	require.Equal(t, 161, result)
 }
 
-func TestParseInstructions(t *testing.T) {
+func TestParserAndScanner(t *testing.T) {
 	input := "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)"
 
-	result := day03.ParseInstructions(input)
+	scanner := parsing.NewScanner(input)
+	tokens := scanner.ScanTokens()
+	parser := parsing.NewParser(tokens)
+	ops := parser.Parse()
 
-	expectedInstructions := []day03.MulInstruction{
-		{Left: 2, Right: 4},
-		{Left: 5, Right: 5},
+	expectedOps := []parsing.Operation{
+		{Type: parsing.OpMul, Left: 2, Right: 4},
+		{Type: parsing.OpMul, Left: 5, Right: 5},
 	}
-	require.Equal(t, expectedInstructions, result)
+	require.Equal(t, expectedOps, ops)
 }
