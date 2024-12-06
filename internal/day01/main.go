@@ -43,18 +43,11 @@ func CalculateDistance(left, right []int) int {
 	totalDistance := 0
 	for i, leftNum := range left {
 		rightNum := right[i]
-		distance := abs(leftNum - rightNum)
+		distance := common.AbsInt(leftNum - rightNum)
 		totalDistance += distance
 	}
 
 	return totalDistance
-}
-
-func abs(x int) int {
-	if x >= 0 {
-		return x
-	}
-	return -x
 }
 
 func CalculateSimilarity(left, right []int) int {
