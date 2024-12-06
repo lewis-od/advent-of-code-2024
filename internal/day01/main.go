@@ -13,6 +13,11 @@ func Part1(input string) int {
 	return CalculateDistance(left, right)
 }
 
+func Part2(input string) int {
+	left, right := ParseLists(input)
+	return CalculateSimilarity(left, right)
+}
+
 func ParseLists(input string) (left []int, right []int) {
 	lines := strings.Split(string(input), "\n")
 	left = make([]int, len(lines))
@@ -51,4 +56,26 @@ func abs(x int) int {
 		return x
 	}
 	return -x
+}
+
+func CalculateSimilarity(left, right []int) int {
+	counts := make(map[int]int, len(left))
+	for _, value := range left {
+		counts[value] = 0
+	}
+
+	for _, value := range right {
+		if _, isInLeft := counts[value]; !isInLeft {
+			continue
+		}
+		counts[value] += 1
+	}
+
+	similarity := 0
+	for _, value := range left {
+		count := counts[value]
+		similarity += value * count
+	}
+
+	return similarity
 }

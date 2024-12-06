@@ -11,4 +11,7 @@ func main() {
 	input := common.ReadInputFile()
 	distance := day01.Part1(string(input))
 	fmt.Printf("The distance is %d\n", distance)
+
+	similarity := day01.Part2(string(input))
+	fmt.Printf("The similarity is %d\n", similarity)
 }

@@ -39,3 +39,12 @@ func TestPart1(t *testing.T) {
 
 	require.Equal(t, 11, distance)
 }
+
+func TestCalculateSimilarity(t *testing.T) {
+	left := []int{3, 4, 2, 1, 3, 3}
+	right := []int{4, 3, 9, 3, 5, 3}
+
+	similarity := day01.CalculateSimilarity(left, right)
+
+	require.Equal(t, 31, similarity)
+}
