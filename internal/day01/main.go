@@ -8,18 +8,17 @@ import (
 	"github.com/lewis-od/aoc24/internal/common"
 )
 
-func Part1(input string) int {
+func Part1(input []string) int {
 	left, right := ParseLists(input)
 	return CalculateDistance(left, right)
 }
 
-func Part2(input string) int {
+func Part2(input []string) int {
 	left, right := ParseLists(input)
 	return CalculateSimilarity(left, right)
 }
 
-func ParseLists(input string) (left []int, right []int) {
-	lines := strings.Split(string(input), "\n")
+func ParseLists(lines []string) (left []int, right []int) {
 	left = make([]int, len(lines))
 	right = make([]int, len(lines))
 

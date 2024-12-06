@@ -8,9 +8,9 @@ import (
 )
 
 func TestParseList(t *testing.T) {
-	input := "3   4\n4   3\n35039   67568\n125   9813"
+	input := []string{"3   4", "4   3", "35039   67568", "125   9813"}
 
-	left, right := day01.ParseLists(string(input))
+	left, right := day01.ParseLists(input)
 
 	expectedLeft := []int{3, 4, 35039, 125}
 	expectedRight := []int{4, 3, 67568, 9813}
@@ -28,12 +28,7 @@ func TestCalculateDistance(t *testing.T) {
 }
 
 func TestPart1(t *testing.T) {
-	input := `3   4
-4   3
-2   5
-1   3
-3   9
-3   3`
+	input := []string{"3   4", "4   3", "2   5", "1   3", "3   9", "3   3"}
 
 	distance := day01.Part1(input)
 

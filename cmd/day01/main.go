@@ -8,10 +8,10 @@ import (
 )
 
 func main() {
-	input := common.ReadInputFile()
-	distance := day01.Part1(string(input))
+	input := common.ReadInputFileLines()
+	distance := day01.Part1(input)
 	fmt.Printf("The distance is %d\n", distance)
 
-	similarity := day01.Part2(string(input))
+	similarity := day01.Part2(input)
 	fmt.Printf("The similarity is %d\n", similarity)
 }
