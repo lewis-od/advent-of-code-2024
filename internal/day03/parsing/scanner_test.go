@@ -89,3 +89,45 @@ func TestScanWithWordAttachedToMul(t *testing.T) {
 	}
 	require.Equal(t, expectedTokens, tokens)
 }
+
+func TestScanDont(t *testing.T) {
+	source := "abcdon'tabcdon't()abc"
+
+	scanner := parsing.NewScanner(source)
+	tokens := scanner.ScanTokens()
+
+	expectedTokens := []parsing.Token{
+		{Type: parsing.TokenGarbage, Lexeme: "abc"},
+		{Type: parsing.TokenDont, Lexeme: "don't"},
+		{Type: parsing.TokenGarbage, Lexeme: "abc"},
+		{Type: parsing.TokenDont, Lexeme: "don't"},
+		{Type: parsing.TokenLeftParen, Lexeme: "("},
+		{Type: parsing.TokenRightParen, Lexeme: ")"},
+		{Type: parsing.TokenGarbage, Lexeme: "abc"},
+		{Type: parsing.TokenEof},
+	}
+	require.Equal(t, expectedTokens, tokens)
+}
+
+func TestScanDo(t *testing.T) {
+	source := "abcdonabcdon'()do()"
+
+	scanner := parsing.NewScanner(source)
+	tokens := scanner.ScanTokens()
+
+	expectedTokens := []parsing.Token{
+		{Type: parsing.TokenGarbage, Lexeme: "abc"},
+		{Type: parsing.TokenDo, Lexeme: "do"},
+		{Type: parsing.TokenGarbage, Lexeme: "nabc"},
+		{Type: parsing.TokenDo, Lexeme: "do"},
+		{Type: parsing.TokenGarbage, Lexeme: "n"},
+		{Type: parsing.TokenGarbage, Lexeme: "'"},
+		{Type: parsing.TokenLeftParen, Lexeme: "("},
+		{Type: parsing.TokenRightParen, Lexeme: ")"},
+		{Type: parsing.TokenDo, Lexeme: "do"},
+		{Type: parsing.TokenLeftParen, Lexeme: "("},
+		{Type: parsing.TokenRightParen, Lexeme: ")"},
+		{Type: parsing.TokenEof},
+	}
+	require.Equal(t, expectedTokens, tokens)
+}

@@ -75,3 +75,77 @@ func TestParseMulOperationWithGarbageSurrounding(t *testing.T) {
 	}
 	require.Equal(t, expectedOperations, operations)
 }
+
+func TestParseDo(t *testing.T) {
+	tokens := []parsing.Token{
+		{Type: parsing.TokenGarbage, Lexeme: "thing"},
+		{Type: parsing.TokenDo, Lexeme: "do"},
+		{Type: parsing.TokenLeftParen, Lexeme: "("},
+		{Type: parsing.TokenRightParen, Lexeme: ")"},
+		{Type: parsing.TokenGarbage, Lexeme: "ignore me"},
+		{Type: parsing.TokenEof},
+	}
+
+	p := parsing.NewParser(tokens)
+	operations := p.Parse()
+
+	expectedOperations := []parsing.Operation{
+		{Type: parsing.OpDo},
+	}
+	require.Equal(t, expectedOperations, operations)
+}
+
+func TestParseInvalidDo(t *testing.T) {
+	tokens := []parsing.Token{
+		{Type: parsing.TokenGarbage, Lexeme: "thing"},
+		{Type: parsing.TokenDo, Lexeme: "do"},
+		{Type: parsing.TokenGarbage, Lexeme: "thing"},
+		{Type: parsing.TokenLeftParen, Lexeme: "("},
+		{Type: parsing.TokenRightParen, Lexeme: ")"},
+		{Type: parsing.TokenGarbage, Lexeme: "ignore me"},
+		{Type: parsing.TokenEof},
+	}
+
+	p := parsing.NewParser(tokens)
+	operations := p.Parse()
+
+	expectedOperations := []parsing.Operation{}
+	require.Equal(t, expectedOperations, operations)
+}
+
+func TestParseDont(t *testing.T) {
+	tokens := []parsing.Token{
+		{Type: parsing.TokenGarbage, Lexeme: "thing"},
+		{Type: parsing.TokenDont, Lexeme: "dont"},
+		{Type: parsing.TokenLeftParen, Lexeme: "("},
+		{Type: parsing.TokenRightParen, Lexeme: ")"},
+		{Type: parsing.TokenGarbage, Lexeme: "ignore me"},
+		{Type: parsing.TokenEof},
+	}
+
+	p := parsing.NewParser(tokens)
+	operations := p.Parse()
+
+	expectedOperations := []parsing.Operation{
+		{Type: parsing.OpDont},
+	}
+	require.Equal(t, expectedOperations, operations)
+}
+
+func TestParseInvalidDont(t *testing.T) {
+	tokens := []parsing.Token{
+		{Type: parsing.TokenGarbage, Lexeme: "thing"},
+		{Type: parsing.TokenDont, Lexeme: "dont"},
+		{Type: parsing.TokenLeftParen, Lexeme: "("},
+		{Type: parsing.TokenGarbage, Lexeme: "thing"},
+		{Type: parsing.TokenRightParen, Lexeme: ")"},
+		{Type: parsing.TokenGarbage, Lexeme: "ignore me"},
+		{Type: parsing.TokenEof},
+	}
+
+	p := parsing.NewParser(tokens)
+	operations := p.Parse()
+
+	expectedOperations := []parsing.Operation{}
+	require.Equal(t, expectedOperations, operations)
+}

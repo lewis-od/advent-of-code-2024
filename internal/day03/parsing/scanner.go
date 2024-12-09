@@ -16,6 +16,8 @@ const (
 	TokenComma
 	TokenNumber
 	TokenGarbage
+	TokenDont // TODO
+	TokenDo   // TODO
 	TokenEof
 )
 
@@ -61,7 +63,7 @@ func (s *scanner) scanToken() {
 		if unicode.IsDigit(c) {
 			s.number()
 		} else if unicode.IsLetter(c) {
-			s.keyword()
+			s.keywordOrGarbage()
 		} else {
 			s.addToken(TokenGarbage)
 		}
@@ -78,17 +80,58 @@ func (s *scanner) number() {
 	s.addNumberToken(literal)
 }
 
-func (s *scanner) keyword() {
-	for unicode.IsLetter(s.peek()) && s.peek() != 'm' {
+func (s *scanner) keywordOrGarbage() {
+	next := s.peek()
+	lexeme := s.source[s.start:s.current]
+	for unicode.IsLetter(next) && next != 'm' && next != 'd' && lexeme != "do" {
 		s.advance()
+		next = s.peek()
+		lexeme = s.source[s.start:s.current]
 	}
 
-	lexeme := s.source[s.start:s.current]
 	if lexeme == "mul" {
 		s.addToken(TokenMul)
-	} else {
-		s.addToken(TokenGarbage)
+		return
+	} else if lexeme == "do" {
+		if !s.match("n't") {
+			s.addToken(TokenDo)
+			return
+		}
+
+		s.dontOrGarbage()
+		return
 	}
+	s.addToken(TokenGarbage)
+}
+
+func (s *scanner) match(lexeme string) bool {
+	if s.current+len(lexeme) >= len(s.source) {
+		return false
+	}
+
+	for i, char := range lexeme {
+		if rune(s.source[s.current+i]) != char {
+			return false
+		}
+	}
+	return true
+}
+
+func (s *scanner) dontOrGarbage() {
+	s.advance() // Consume 'n'
+	first := s.advance()
+	if first != '\'' {
+		s.addToken(TokenGarbage)
+		return
+	}
+
+	second := s.advance()
+	if second != 't' {
+		s.addToken(TokenGarbage)
+		return
+	}
+
+	s.addToken(TokenDont)
 }
 
 func (s *scanner) peek() rune {

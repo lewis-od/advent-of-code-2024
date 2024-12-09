@@ -1,9 +1,15 @@
 package parsing
 
+import (
+	"slices"
+)
+
 type OpType int
 
 const (
 	OpMul OpType = iota
+	OpDo
+	OpDont
 )
 
 type Operation struct {
@@ -18,12 +24,13 @@ type Parser struct {
 }
 
 func NewParser(tokens []Token) *Parser {
-	return &Parser{tokens: tokens}
+	return &Parser{tokens: tokens, operations: []Operation{}}
 }
 
 // ops -> operation*
-// operation -> mul
+// operation -> mul | imperative
 // mul -> "mul" "(" NUMBER "," NUMBER ")"
+// imperative -> ( "do" | "don't" ) "(" ")"
 func (p *Parser) Parse() []Operation {
 	for !p.isAtEnd() {
 		p.ops()
@@ -32,9 +39,25 @@ func (p *Parser) Parse() []Operation {
 }
 
 func (p *Parser) ops() {
-	for p.chomp(TokenMul) {
+	for p.chomp(TokenMul, TokenDo, TokenDont) {
+		keyword := p.previous()
 		_, wasPresent := p.consume(TokenLeftParen)
 		if !wasPresent {
+			continue
+		}
+
+		if keyword.Type != TokenMul {
+			// imperative
+			_, wasPresent := p.consume(TokenRightParen)
+			if !wasPresent {
+				continue
+			}
+
+			if keyword.Type == TokenDo {
+				p.operations = append(p.operations, Operation{Type: OpDo})
+			} else {
+				p.operations = append(p.operations, Operation{Type: OpDont})
+			}
 			continue
 		}
 
@@ -67,8 +90,8 @@ func (p *Parser) ops() {
 	}
 }
 
-func (p *Parser) chomp(tokenType TokenType) bool {
-	for p.peek().Type != tokenType && !p.isAtEnd() {
+func (p *Parser) chomp(tokenTypes ...TokenType) bool {
+	for !slices.Contains(tokenTypes, p.peek().Type) && !p.isAtEnd() {
 		p.advance()
 	}
 
