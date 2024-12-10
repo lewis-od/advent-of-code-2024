@@ -35,19 +35,69 @@ func (g *Grid) CountXmasesFrom(x, y int) int {
 			if dx == 0 && dy == 0 {
 				continue
 			}
-			numXmases += g.countXmasesFromInDirection(x, y, dx, dy)
+
+			if g.isWordInDirection("XMAS", x, y, dx, dy) {
+				numXmases++
+			}
 		}
 	}
 	return numXmases
 }
 
-func (g *Grid) countXmasesFromInDirection(x, y int, dx, dy int) int {
-	xmas := "XMAS"
-	for n, target := range xmas {
+func (g *Grid) CountCrossMasesFrom(x, y int) int {
+	numCrossMases := 0
+	if g.isMLeftCrossMas(x, y) {
+		numCrossMases++
+	}
+
+	if g.isMRightCrossMas(x, y) {
+		numCrossMases++
+	}
+
+	if g.isMBottomCrossMas(x, y) {
+		numCrossMases++
+	}
+
+	if g.isMTopCrossMas(x, y) {
+		numCrossMases++
+	}
+	return numCrossMases
+}
+
+func (g *Grid) isMLeftCrossMas(x, y int) bool {
+	if !g.isWordInDirection("MAS", x, y, 1, 1) {
+		return false
+	}
+	return g.isWordInDirection("MAS", x, y+2, 1, -1)
+}
+
+func (g *Grid) isMRightCrossMas(x, y int) bool {
+	if !g.isWordInDirection("MAS", x, y, -1, 1) {
+		return false
+	}
+	return g.isWordInDirection("MAS", x, y+2, -1, -1)
+}
+
+func (g *Grid) isMBottomCrossMas(x, y int) bool {
+	if !g.isWordInDirection("MAS", x, y, -1, -1) {
+		return false
+	}
+	return g.isWordInDirection("MAS", x-2, y, 1, -1)
+}
+
+func (g *Grid) isMTopCrossMas(x, y int) bool {
+	if !g.isWordInDirection("MAS", x, y, 1, 1) {
+		return false
+	}
+	return g.isWordInDirection("MAS", x+2, y, -1, 1)
+}
+
+func (g *Grid) isWordInDirection(word string, x, y int, dx, dy int) bool {
+	for n, target := range word {
 		actual := g.Get(x+n*dx, y+n*dy)
 		if actual != target {
-			return 0
+			return false
 		}
 	}
-	return 1
+	return true
 }

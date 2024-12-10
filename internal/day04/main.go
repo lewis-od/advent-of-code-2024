@@ -12,3 +12,14 @@ func Part1(input []string) int {
 	}
 	return numXmases
 }
+
+func Part2(input []string) int {
+	g := grid.NewGrid(input)
+	numCrossMases := 0
+	for y := range g.Height() {
+		for x := range g.Width() {
+			numCrossMases += g.CountCrossMasesFrom(x, y)
+		}
+	}
+	return numCrossMases
+}
