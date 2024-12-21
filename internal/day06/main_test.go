@@ -25,3 +25,22 @@ func TestPart1(t *testing.T) {
 
 	require.Equal(t, 41, result)
 }
+
+func TestPart2(t *testing.T) {
+	input := []string{
+		"....#.....",
+		".........#",
+		"..........",
+		"..#.......",
+		".......#..",
+		"..........",
+		".#..^.....",
+		"........#.",
+		"#.........",
+		"......#...",
+	}
+
+	result := day06.Part2(input)
+
+	require.Equal(t, 6, result)
+}
