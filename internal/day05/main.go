@@ -22,6 +22,23 @@ func Part1(input []string) int {
 	return result
 }
 
+func Part2(input []string) int {
+	rules, pagesList := ParseInput(input)
+	compare := generateComparatorFromRules(rules)
+
+	result := 0
+	for _, pages := range pagesList {
+		if ArePagesSorted(rules, pages) {
+			continue
+		}
+		slices.SortFunc(pages, compare)
+		middleValue := pages[len(pages)/2]
+		result += middleValue
+	}
+
+	return result
+}
+
 func ParseInput(input []string) (map[int][]int, [][]int) {
 	rules := make(map[int][]int)
 	pages := make([][]int, 0)
@@ -66,12 +83,16 @@ func parsePages(line string) []int {
 }
 
 func ArePagesSorted(rules map[int][]int, pages []int) bool {
-	compare := func(a, b int) int {
+	compare := generateComparatorFromRules(rules)
+	return slices.IsSortedFunc(pages, compare)
+}
+
+func generateComparatorFromRules(rules map[int][]int) func(int, int) int {
+	return func(a, b int) int {
 		greater := rules[b]
 		if slices.Contains(greater, a) {
 			return 1
 		}
 		return -1
 	}
-	return slices.IsSortedFunc(pages, compare)
 }
