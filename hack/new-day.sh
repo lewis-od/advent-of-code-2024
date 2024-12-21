@@ -19,8 +19,16 @@ touch "cmd/$1/input/example.txt" "cmd/$1/input/full.txt"
 cat <<EOF > "cmd/$1/main.go"
 package main
 
-func main() {
+import (
+	"fmt"
+	"github.com/lewis-od/aoc24/internal/common"
+	"github.com/lewis-od/aoc24/internal/$1"
+)
 
+func main() {
+	input := common.ReadInputFileLines()
+	result := $1.Part1(input)
+	fmt.Printf("Part 1: %d\n", result)
 }
 EOF
 echo "Created cmd/$1/main.go"
