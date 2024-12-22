@@ -1,6 +1,7 @@
 package day07
 
 import (
+	"fmt"
 	"github.com/lewis-od/aoc24/internal/common"
 	"strconv"
 	"strings"
@@ -10,20 +11,17 @@ type Operator uint8
 
 const (
 	Add Operator = iota
-	Subtract
-	Divide
 	Multiply
+	Concat
 )
-
-var allOperators = []Operator{Add, Multiply}
 
 type Equation struct {
 	Target   int64
 	Operands []int64
 }
 
-func (e Equation) IsSolvable() bool {
-	permutations := OperatorPermutations(len(e.Operands) - 1)
+func (e Equation) IsSolvable(operators []Operator) bool {
+	permutations := OperatorPermutations(len(e.Operands)-1, operators)
 	for _, operators := range permutations {
 		result := e.Evaluate(operators)
 		if result == e.Target {
@@ -32,14 +30,6 @@ func (e Equation) IsSolvable() bool {
 	}
 
 	return false
-}
-
-func multiplyAll(operands []int64) int64 {
-	result := operands[0]
-	for _, operand := range operands[1:] {
-		result *= operand
-	}
-	return result
 }
 
 func (e Equation) Evaluate(operations []Operator) int64 {
@@ -53,12 +43,12 @@ func (e Equation) Evaluate(operations []Operator) int64 {
 		switch operation {
 		case Add:
 			total += next
-		case Subtract:
-			total -= next
 		case Multiply:
 			total *= next
-		case Divide:
-			total /= next
+		case Concat:
+			left := fmt.Sprintf("%d", total)
+			newTotal := string(strconv.AppendInt([]byte(left), next, 10))
+			total = common.Must(strconv.ParseInt(newTotal, 10, 64))
 		}
 	}
 
@@ -67,10 +57,26 @@ func (e Equation) Evaluate(operations []Operator) int64 {
 
 func Part1(input []string) int64 {
 	equations := ParseEquations(input)
+	operators := []Operator{Add, Multiply}
 
 	result := int64(0)
 	for _, equation := range equations {
-		if !equation.IsSolvable() {
+		if !equation.IsSolvable(operators) {
+			continue
+		}
+		result += equation.Target
+	}
+
+	return result
+}
+
+func Part2(input []string) int64 {
+	equations := ParseEquations(input)
+	operators := []Operator{Add, Multiply, Concat}
+
+	result := int64(0)
+	for _, equation := range equations {
+		if !equation.IsSolvable(operators) {
 			continue
 		}
 		result += equation.Target
@@ -107,7 +113,7 @@ func parseEquation(input string) Equation {
 	}
 }
 
-func OperatorPermutations(n int) [][]Operator {
+func OperatorPermutations(n int, allOperators []Operator) [][]Operator {
 	var result [][]Operator
 
 	var permute func(comb []Operator)
