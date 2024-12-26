@@ -61,3 +61,43 @@ func TestFindAntennae(t *testing.T) {
 	}
 	require.Equal(t, expected, result)
 }
+
+func TestPart2(t *testing.T) {
+	input := []string{
+		"............",
+		"........0...",
+		".....0......",
+		".......0....",
+		"....0.......",
+		"......A.....",
+		"............",
+		"............",
+		"........A...",
+		".........A..",
+		"............",
+		"............",
+	}
+
+	result := day08.Part2(input)
+
+	require.Equal(t, 34, result)
+}
+
+func TestPart2_Small(t *testing.T) {
+	input := []string{
+		"T.........",
+		"...T......",
+		".T........",
+		"..........",
+		"..........",
+		"..........",
+		"..........",
+		"..........",
+		"..........",
+		"..........",
+	}
+
+	result := day08.Part2(input)
+
+	require.Equal(t, 9, result)
+}

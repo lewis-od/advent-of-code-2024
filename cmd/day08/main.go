@@ -10,4 +10,7 @@ func main() {
 	input := common.ReadInputFileLines()
 	result := day08.Part1(input)
 	fmt.Printf("Part 1: %d\n", result)
+
+	result = day08.Part2(input)
+	fmt.Printf("Part 2: %d\n", result)
 }
