@@ -10,7 +10,8 @@ var ErrInvalidInvocation = errors.New("expcted 1 argument")
 
 func ReadInputFileLines() []string {
 	contents := ReadInputFile()
-	return strings.Split(string(contents), "\n")
+	trimmed := strings.Trim(string(contents), "\n")
+	return strings.Split(trimmed, "\n")
 }
 
 func ReadInputFile() []byte {
